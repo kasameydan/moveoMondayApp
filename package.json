@@ -26,7 +26,7 @@
     "nodemon": "^2.0.4"
   },
   "scripts": {
-    "star": "cross-env NODE_ENV=prodction node app",
+    "start": "cross-env NODE_ENV=prodction node app",
     "dev": "cross-env NODE_ENV=development nodemon app"
   },
   "author": "meydankasa",
