@@ -42,12 +42,11 @@ async function fetchAndMutation() {
   }, [])
   boards[0].items = newItems;
 
-
   // add id to each employee:
   let empArray = [];
   newObj = {};
-  empArrAY = boards[0].items;
-
+  empArray = boards[0].items;
+  
   let boardInfo = await query('post', 'query', getMembersById)
   let empIds = boardInfo.data.boards[0].items;
 
@@ -56,8 +55,7 @@ async function fetchAndMutation() {
   empArray.forEach(item => {
     let allMembers = item.column_values[0].text;
     let allhouers = item.column_values[1].text;
-    let mutationFields = `mutation {change_column_value(board_id: 667708556, item_id: ${newArray[allMembers]}, column_id: hours_tracked, value:"${allhouers}") {id}}`;
-
+    let mutationFields = `mutation {change_column_value(board_id: 667708556, item_id: ${newObj[allMembers]}, column_id: hours_tracked, value:"${allhouers}") {id}}`;
     query('post', 'query', mutationFields)
   })
 };
