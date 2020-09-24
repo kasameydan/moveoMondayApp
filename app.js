@@ -5,21 +5,23 @@ const express = require('express');
 const app = express();
 const mondayFunc = require('./src/src/routes/function')
 const port = process.env.PORT;
+const CronJob = require('cron').CronJob;
 
 
 app.use(bodyParser.json())
-// app.use('/subrout/',routes);
 
-app.get('/subrout/members_houers', async function (req, res) {
+
+const job = new CronJob('0 * * * *', async() => {
+    await mondayFunc.fetchAndMutation();
+}, null, true);
+job.start();
+
+
+
+app.post('/subrout/members_houers', async function (req, res) {
     const result = await mondayFunc.fetchAndMutation();
     res.json(result)
 });
-
-app.get('/subrout/testOne', async function (req, res) {
-    const result = await mondayFunc.testOne();
-    res.json(result)
-});
-
 
 
 app.listen(port, () => console.log(`Quickstart app listening at http://localhost:${port}`))

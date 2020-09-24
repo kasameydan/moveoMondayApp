@@ -4,7 +4,7 @@ const router = express.Router();
 const mondayFunc = require('./function')
 
 
-router.get('/members_houers', function (req, res) {
+router.get('/members_houers', function () {
     res.send(mondayFunc.testOne());
 })
 
