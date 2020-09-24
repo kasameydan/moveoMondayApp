@@ -5,7 +5,6 @@ const mondayFunc = require('./function')
 
 
 router.get('/members_houers', function (req, res) {
-    // res.json(mondayFunc.fetchAndMutation());
     res.send(mondayFunc.testOne());
 })
 

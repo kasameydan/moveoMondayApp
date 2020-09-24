@@ -47,10 +47,10 @@ async function fetchAndMutation() {
   let empArray = [];
   newObj = {};
   empArray = boards[0].items;
-  
+
   let boardInfo = await query('post', 'query', getMembersById)
   let empIds = boardInfo.data.boards[0].items;
-  empIds.forEach(item => { newObj[item.name] = item.id }) ;
+  empIds.forEach(item => { newObj[item.name] = item.id });
 
   empArray.forEach(item => {
     let allMembers = item.column_values[0].text;
@@ -62,11 +62,11 @@ async function fetchAndMutation() {
   // return empArray
 };
 
-async function testOne(){
-  console.log('func get call..');
-  let box = ['1','2','3','2']
-
+async function testOne() {
+  console.log('testOne func call..');
+  let box = ['1', '2', '3', '2']
+  
   return box
 }
 
-module.exports = { fetchAndMutation ,  query ,testOne };
+module.exports = { fetchAndMutation, query, testOne };
