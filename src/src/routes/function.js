@@ -59,7 +59,7 @@ async function fetchAndMutation() {
     query('post', 'query', mutationFields)
   })
   // // see obj result on Postman
-  return empArray
+  // return empArray
 };
 
 async function testOne(){
@@ -67,6 +67,6 @@ async function testOne(){
   let box = ['1','2','3','2']
 
   return box
-}// √√√√
+}
 
 module.exports = { fetchAndMutation ,  query ,testOne };

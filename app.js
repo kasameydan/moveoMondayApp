@@ -9,11 +9,16 @@ const port = process.env.PORT;
 
 app.use(bodyParser.json())
 // app.use('/subrout/',routes);
+// app.get('/subrout/members_houers', async function(req, res){
+//     const result = await mondayFunc.testOne();
+//     res.json(result)
+//  });
 
 app.get('/subrout/members_houers', async function(req, res){
     const result = await mondayFunc.fetchAndMutation();
     res.json(result)
  });
+
 
 
 app.listen(port, () => console.log(`Quickstart app listening at http://localhost:${port}`))
