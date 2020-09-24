@@ -1,12 +1,10 @@
-const express = require('express');
-const router = express.Router();
 const fetch = require("node-fetch");
-const config = require('../../../config');
+const config = require('../config');
 
-// Get Memberd & Houers data from sprint-board
+// Get members & hours data from sprint-board
 let getMemberd_getHouers = 'query {boards(ids: 671223520){ items { column_values(ids:["people3", "retainer_billing8"]){ text }}}}'
 
-// Get members by they id from Info-board
+// Get members by id from Info-board
 let getMembersById = 'query {boards(ids:667708556){ items { id name }}}'
 
 async function query(method, queryType, queryString) {
@@ -26,7 +24,6 @@ async function query(method, queryType, queryString) {
 
 
 async function fetchAndMutation() {
-  console.log('Function is runing on postman..');
   let response = await query('post', 'query', getMemberd_getHouers);
   boards = response.data.boards;
 
@@ -58,15 +55,6 @@ async function fetchAndMutation() {
     let mutationFields = `mutation {change_column_value(board_id: 667708556, item_id: ${newObj[allMembers]}, column_id: hours_tracked, value:"${allhouers}"){ id }}`;
     query('post', 'query', mutationFields)
   })
-  // // see obj result on Postman
-  // return empArray
 };
 
-async function testOne() {
-  console.log('testOne func call..');
-  let box = ['the', 'box','2']
-  
-  return box
-}
-
-module.exports = { fetchAndMutation, query, testOne };
+module.exports = { fetchAndMutation, query };
