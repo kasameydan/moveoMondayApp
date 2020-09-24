@@ -64,7 +64,7 @@ async function fetchAndMutation() {
 
 async function testOne() {
   console.log('testOne func call..');
-  let box = ['1', '2', '3', '2']
+  let box = ['the', 'box','2']
   
   return box
 }
