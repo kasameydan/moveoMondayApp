@@ -1,7 +1,7 @@
 const fetch = require("node-fetch");
 const config = require('../config');
 
-// Get members & hours data from sprint-board
+// Get members & hours dao0ta from sprint-board
 let getMemberd_getHouers = 'query {boards(ids: 671223520){ items { column_values(ids:["people3", "retainer_billing8"]){ text }}}}'
 
 // Get members by id from Info-board
@@ -22,11 +22,9 @@ async function query(method, queryType, queryString) {
     .then(res => res);
 }
 
-
 async function fetchAndMutation() {
   let response = await query('post', 'query', getMemberd_getHouers);
   boards = response.data.boards;
-
   const newItems = boards[0].items.reduce(function (lastValue, item) {
     const idx = lastValue.findIndex(lastItem => lastItem.column_values[0].text === item.column_values[0].text)
     if (idx !== -1) {
@@ -44,13 +42,16 @@ async function fetchAndMutation() {
   let empArray = [];
   newObj = {};
   empArray = boards[0].items;
-
   let boardInfo = await query('post', 'query', getMembersById)
   let empIds = boardInfo.data.boards[0].items;
-  empIds.forEach(item => { newObj[item.name] = item.id });
+
+  empIds.forEach(item => { itemName = item.name.toLowerCase();
+    newObj[itemName] = item.id
+  });
+
 
   empArray.forEach(item => {
-    let allMembers = item.column_values[0].text;
+    let allMembers = item.column_values[0].text.toLowerCase();
     let allhouers = item.column_values[1].text;
     let mutationFields = `mutation {change_column_value(board_id: 667708556, item_id: ${newObj[allMembers]}, column_id: hours_tracked, value:"${allhouers}"){ id }}`;
     query('post', 'query', mutationFields)

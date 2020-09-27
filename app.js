@@ -16,7 +16,6 @@ const displayQueryHourly = new CronJob('0 * * * *', async() => {
 displayQueryHourly.start();
 
 
-
 app.post('/hoursTracked', async (req, res) => {
     const result = await mondayFunc.fetchAndMutation();
     res.json(result)
