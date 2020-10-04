@@ -1,8 +1,8 @@
 const fetch = require("node-fetch");
 const config = require('../config');
 
-// Get members & hours dao0ta from sprint-board
-let getMemberd_getHouers = 'query {boards(ids: 671223520){ items { column_values(ids:["people3", "retainer_billing8"]){ text }}}}'
+// Get members & hours & data data from sprint-board
+let getMemberd_getHouers = 'query {boards(ids: 671223520){ items { column_values(ids:["people3", "retainer_billing8", "date"]){ text }}}}'
 
 // Get members by id from Info-board
 let getMembersById = 'query {boards(ids:667708556){ items { id name }}}'
@@ -24,12 +24,19 @@ async function query(method, queryType, queryString) {
 
 async function fetchAndMutation() {
   let response = await query('post', 'query', getMemberd_getHouers);
+  let day = new Date()
+  let currentMonth = day.toISOString().split('-')[1]
+
   boards = response.data.boards;
   const newItems = boards[0].items.reduce(function (lastValue, item) {
+    debugger
     const idx = lastValue.findIndex(lastItem => lastItem.column_values[0].text === item.column_values[0].text)
+    if (item.column_values[1].text.split('-')[1] != currentMonth) {
+      return lastValue
+    }
     if (idx !== -1) {
-      const sum = Number(lastValue[idx].column_values[1].text) + Number(item.column_values[1].text)
-      lastValue[idx].column_values[1].text = String(sum);
+      const sum = Number(lastValue[idx].column_values[2].text) + Number(item.column_values[2].text)
+      lastValue[idx].column_values[2].text = String(sum);
       return lastValue;
     } else {
       lastValue.push(item)
@@ -38,6 +45,7 @@ async function fetchAndMutation() {
   }, [])
   boards[0].items = newItems;
 
+
   // add id to each employee:
   let empArray = [];
   newObj = {};
@@ -45,17 +53,23 @@ async function fetchAndMutation() {
   let boardInfo = await query('post', 'query', getMembersById)
   let empIds = boardInfo.data.boards[0].items;
 
-  empIds.forEach(item => { itemName = item.name.toLowerCase();
+  empIds.forEach(item => {
+    itemName = item.name.toLowerCase();
     newObj[itemName] = item.id
   });
 
-
+  debugger
   empArray.forEach(item => {
     let allMembers = item.column_values[0].text.toLowerCase();
-    let allhouers = item.column_values[1].text;
+    let allhouers = item.column_values[2].text;
+    // console.log('newObj[allMembers]:' , newObj[allMembers]);
+    ///TODO: cheak error update fileds
+    // ---Safi Noah - 104 לא הזין
+    // ---Yonatan Kra 181 לא הזין 
     let mutationFields = `mutation {change_column_value(board_id: 667708556, item_id: ${newObj[allMembers]}, column_id: hours_tracked, value:"${allhouers}"){ id }}`;
     query('post', 'query', mutationFields)
   })
 };
+
 
 module.exports = { fetchAndMutation, query };
