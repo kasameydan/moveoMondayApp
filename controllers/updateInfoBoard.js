@@ -1,8 +1,8 @@
 const fetch = require("node-fetch");
 const config = require('../config');
 
-// Get members & hours & data data from sprint-board
-let getMemberd_getHouers = 'query {boards(ids: 671223520){ items { column_values(ids:["people3", "retainer_billing8", "date"]){ text }}}}'
+// Get members & hours & date data from sprint-board 
+let getMembersHouersDatePms = 'query {boards(ids: 671223520){ items { column_values(ids:["people3","retainer_billing8","people_assing4","date"]){ text }}}}'
 
 // Get members by id from Info-board
 let getMembersById = 'query {boards(ids:667708556){ items { id name }}}'
@@ -23,22 +23,28 @@ async function query(method, queryType, queryString) {
 }
 
 async function fetchAndMutation() {
-  let response = await query('post', 'query', getMemberd_getHouers);
+  let response = await query('post', 'query', getMembersHouersDatePms);
   let day = new Date()
   let currentMonth = day.toISOString().split('-')[1]
-
   boards = response.data.boards;
+
   const newItems = boards[0].items.reduce(function (lastValue, item) {
     debugger
     const idx = lastValue.findIndex(lastItem => lastItem.column_values[0].text === item.column_values[0].text)
-    if (item.column_values[1].text.split('-')[1] != currentMonth) {
-      return lastValue
-    }
+    let dayCheck = item.column_values[3].text
     if (idx !== -1) {
+      if (dayCheck.split('-')[1] != currentMonth) {
+        return lastValue;
+      }
       const sum = Number(lastValue[idx].column_values[2].text) + Number(item.column_values[2].text)
       lastValue[idx].column_values[2].text = String(sum);
       return lastValue;
     } else {
+      if (dayCheck.split('-')[1] != currentMonth) {
+        item.column_values[2].text = '0';
+        lastValue.push(item)
+        return lastValue;
+      }
       lastValue.push(item)
       return lastValue;
     }
@@ -62,10 +68,6 @@ async function fetchAndMutation() {
   empArray.forEach(item => {
     let allMembers = item.column_values[0].text.toLowerCase();
     let allhouers = item.column_values[2].text;
-    // console.log('newObj[allMembers]:' , newObj[allMembers]);
-    ///TODO: cheak error update fileds
-    // ---Safi Noah - 104 לא הזין
-    // ---Yonatan Kra 181 לא הזין 
     let mutationFields = `mutation {change_column_value(board_id: 667708556, item_id: ${newObj[allMembers]}, column_id: hours_tracked, value:"${allhouers}"){ id }}`;
     query('post', 'query', mutationFields)
   })

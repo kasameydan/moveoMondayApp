@@ -25,7 +25,7 @@ displayQueryHourly.start();
 
 
 app.post('/dailyHouersEmail', async (req, res) => {
-    const result = await emailPm.sendMail()
+    const result = await emailPm.fetchAndMaillPms()
     res.json(result)
 });
 
