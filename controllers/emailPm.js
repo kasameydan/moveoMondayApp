@@ -22,9 +22,7 @@ async function query(method, queryType, queryString) {
 }
 
 async function fetchAndMaillPms() {
-
-  sendMail('html','kasameydan@gmail.com')
-        console.log('0');
+  sendMail('HTML First Cheak.. Working !!','kasameydan@gmail.com')//TODO:temp
 
   let day = new Date()
   let currentDate = day.toISOString().split('T')[0]
@@ -65,7 +63,6 @@ async function fetchAndMaillPms() {
     const html = generateHTML(team)
     switch (team) {
       case 'Eco':
-        console.log('1');
         sendMail(html,'kasameydan@gmail.com');//send to p.email check
           //sendMail(html, 'carmel@moveo.co.i');
         break;
