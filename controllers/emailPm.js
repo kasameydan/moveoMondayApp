@@ -22,8 +22,6 @@ async function query(method, queryType, queryString) {
 }
 
 async function fetchAndMaillPms() {
-  sendMail('HTML First Cheak.. Working !!','kasameydan@gmail.com')//TODO:temp
-
   let day = new Date()
   let currentDate = day.toISOString().split('T')[0]
   let response = await query('post', 'query', getMembersHouersDatePms);
@@ -63,14 +61,14 @@ async function fetchAndMaillPms() {
     const html = generateHTML(team)
     switch (team) {
       case 'Eco':
-        sendMail(html,'kasameydan@gmail.com');//send to p.email check
-          //sendMail(html, 'carmel@moveo.co.i');
+        sendMail(html,'meydanl@moveo.group');
+        //sendMail(html, 'carmel@moveo.co.i');
         break;
       case 'HLS':
         //  sendMail(html, 'mika@moveo.group');
         break;
       case 'Fox':
-        // sendMail(html, 'oren@moveo.co.il');
+        //sendMail(html, 'oren@moveo.co.il');
         break;
       case 'Charlie':
         // sendMail(html, 'liata@moveo.co.il ');
@@ -93,6 +91,11 @@ async function fetchAndMaillPms() {
       teamNames.push(members)
       teamHouers.push(houers)
     }
+    let rows;
+    teamNames.forEach((member,i) => {
+      rows += `<tr><td>${member}</td><td>${teamHouers[i]}</td></tr>`
+    }) 
+
     const emailContent = `<style> #title{
       color:#fff;
       font-weight:500;
@@ -131,25 +134,17 @@ async function fetchAndMaillPms() {
     </style>
     
     <div class="container">
-    <h1 id="title"> Team ${teamNameY} Daily Houers Report </h1>
-    <h3>  Date: ${currentDate}  </h3>
-    <table id="our-table">
-      <thead>
-        <tr>
-          <th> Name </th>
-          <th> Hours Report </th>
-        </tr>
-      </thead>
-      <tbody id="table-body">
-      <script type="text/javascript" >
-      for (let i = 0; i < ${teams[teamNameY].length}; i++) {
-        document.write("<tr><td>"+ ${teamNames}[i] +"</td>");
-        document.write("<td>"+ ${teamHouers}[i] +"</td></tr>");
-      }
-      </script>
-      </tbody>
-    </table>
-  </div>`;
+      <h1 id="title"> Team ${teamNameY} Daily Houers Report </h1>
+      <h3> Date: ${currentDate}  </h3>
+      <table id="our-table">
+        <thead>
+          <tr><th> Name </th> <th> Hours Report </th></tr>
+        </thead>
+        <tbody>
+          ${rows}
+        </tbody>
+      </table>
+    </div>`;
     return emailContent
   }
 }
