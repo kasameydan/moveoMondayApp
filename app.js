@@ -17,7 +17,7 @@ const displayQueryHourly = new CronJob('0 * * * *', async() => {
 }, null, true);
 displayQueryHourly.start();
 
-
+//TODO: after review & email check
 // const testingMails = new CronJob('00 20 * * *', async() => {
 //     await emailPm.fetchAndMaillPms();
 // }, null, true);

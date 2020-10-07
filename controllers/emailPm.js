@@ -22,31 +22,35 @@ async function query(method, queryType, queryString) {
 }
 
 async function fetchAndMaillPms() {
-  const MEYDAN = 'meydank@moveo.co.il'
+
+  sendMail('html','kasameydan@gmail.com')
+        console.log('0');
+
   let day = new Date()
   let currentDate = day.toISOString().split('T')[0]
   let response = await query('post', 'query', getMembersHouersDatePms);
   boards = response.data.boards;
+
   const newItems = boards[0].items.reduce(function (lastValue, item) {
     const idx = lastValue.findIndex(lastItem => lastItem.column_values[0].text === item.column_values[0].text)
-    if (item.column_values[3].text != currentDate) {
+    if (item.column_values[2].text != currentDate ) {
       return lastValue
     }
     if (idx !== -1) {
-      const sum = Number(lastValue[idx].column_values[2].text) + Number(item.column_values[2].text)
-      lastValue[idx].column_values[2].text = String(sum);
+      const sum = Number(lastValue[idx].column_values[3].text) + Number(item.column_values[3].text)
+      lastValue[idx].column_values[3].text = String(sum);
       return lastValue;
     } else {
       lastValue.push(item)
       return lastValue;
     }
   }, [])
-  boards[0].items = newItems;
-  console.log('newItems ===>', JSON.stringify(newItems, null, 2));
 
+  boards[0].items = newItems;
   const teams = {};
   teamNames = []
   teamHouers = []
+
   newItems.forEach(item => {
     const teamName = item.column_values[1].text
     if (!teams[teamName]) {
@@ -61,11 +65,11 @@ async function fetchAndMaillPms() {
     const html = generateHTML(team)
     switch (team) {
       case 'Eco':
-        sendMail(html, MEYDAN);
-        //  sendMail(html, 'carmel@moveo.co.i');
+        console.log('1');
+        sendMail(html,'kasameydan@gmail.com');//send to p.email check
+          //sendMail(html, 'carmel@moveo.co.i');
         break;
       case 'HLS':
-        //  sendMail(html, MEYDAN);
         //  sendMail(html, 'mika@moveo.group');
         break;
       case 'Fox':
@@ -83,14 +87,12 @@ async function fetchAndMaillPms() {
   })
 
 
-  //TODO: lopp on 'teams' inside tbody
   function generateHTML(teamNameY) {
-    debugger
     teamNames = []
     teamHouers = []
-    let members = teams[teamNameY][0]['column_values'][0].text;
-    let houers = teams[teamNameY][0]['column_values'][3].text;
     for (let i = 0; i < teams[teamNameY].length - 1; i++) {
+      let members = teams[teamNameY][i]['column_values'][0].text;
+      let houers = teams[teamNameY][i]['column_values'][3].text;
       teamNames.push(members)
       teamHouers.push(houers)
     }
@@ -144,8 +146,8 @@ async function fetchAndMaillPms() {
       <tbody id="table-body">
       <script type="text/javascript" >
       for (let i = 0; i < ${teams[teamNameY].length}; i++) {
-        document.write("<tr><td>"+ ${teamNames}[i] +"</td></tr>");
-        document.write("<tr><td>"+ ${teamHouers}[i] +"</td></tr>");
+        document.write("<tr><td>"+ ${teamNames}[i] +"</td>");
+        document.write("<td>"+ ${teamHouers}[i] +"</td></tr>");
       }
       </script>
       </tbody>
@@ -153,28 +155,23 @@ async function fetchAndMaillPms() {
   </div>`;
     return emailContent
   }
-
-  // console.log('team team', JSON.stringify(teams, null, 2));
 }
 
-
-// mYemail = 'meydank@moveo.co.il'
-// sendMail(mYemail, template);
-async function sendMail(dataTable, mailAdress) {
+async function sendMail(dataTable, emailAddress) {
   const domain = 'moveodevelop.com';
   const api_Key = 'key-5a8b594f54f98eea6ed02c3424ce70b3';
   let mailgun = require('mailgun-js')({ apiKey: api_Key, domain: domain });
 
   let mail = mailcomposer({
-    from: 'Moveo <meydank@moveo.co.il>',
-    to: 'meydank@moveo.co.il',
-    subject: 'Test20',
+    from: 'Moveo monday bot <dev@moveodevelop.com>',
+    to: emailAddress,
+    subject: 'Daily Hours Update',
     html: dataTable
   });
 
-  mail.build(function (mailBuildError, message) {
+  mail.build((mailBuildError, message) => {
     let dataToSend = {
-      to: 'meydank@moveo.co.il',
+      to: emailAddress,
       message: message.toString('ascii')
     };
     mailgun.messages().sendMime(dataToSend, function (sendError, body) {
@@ -184,6 +181,7 @@ async function sendMail(dataTable, mailAdress) {
         return;
       }
     });
+   // if(mailBuildError) console.log('mailBuildError : ' , mailBuildError);
   });
 }
 
