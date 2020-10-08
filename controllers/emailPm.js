@@ -21,7 +21,6 @@ async function query(method, queryType, queryString) {
     .then(res => res);
 }
 
-fetchAndMaillPms()
 async function fetchAndMaillPms() {
   let day = new Date()
   let currentDate = day.toISOString().split('T')[0]
@@ -60,14 +59,12 @@ async function fetchAndMaillPms() {
 
   Object.keys(teams).forEach(team => {
     const html = generateHTML(team)
-    
     switch (team) {
       case 'Eco':
-        //sendMail(html,'meydank@moveo.group');
+        sendMail(html,'meydank@moveo.group');
         //sendMail(html, 'carmel@moveo.co.i');
         break;
       case 'HLS':
-        //sendMail(html,'meydank@moveo.group');
         //sendMail(html, 'mika@moveo.group');
         break;
       case 'Fox':
@@ -91,66 +88,32 @@ async function fetchAndMaillPms() {
     for (let i = 0; i < teams[teamNameY].length -1; i++) {
       let members = teams[teamNameY][i]['column_values'][0].text;
       let houers = teams[teamNameY][i]['column_values'][3].text;
+      if (houers === undefined || houers ==  null || houers ===  '') {
+        houers = '0'
+      }
       teamNames.push(members)
       teamHouers.push(houers)
     }
     let rows;
     teamNames.forEach((member,i) => {
-      rows += `<tr><td>${member}</td><td>${teamHouers[i]}</td></tr>`
+      rows += `<tr><td style="padding: 4px; color: black;">${member}</td><td style="padding: 4px; color: black;">${teamHouers[i]}</td></tr>`
     }) 
-
     let newRows = rows.replace('undefined', '')
 
-    const emailContent = `<html>
-      <body>
-        <style> 
-          .title{
-            color:#fff;
-            font-weight:500;
-            font-size:28px;
-            padding:10px;
-            border:1px solid #fff;
-            background-color: #55608f;
-          }
-          html,body {
-            height: 10%;
-          } 
-          body {
-            margin: 0;
-            font-family: sans-serif;
-            font-weight: 100;
-          } 
-          .continer{
-          table, td, th {  
-            border: 1px solid #ddd;
-            text-align: left;
-            dirltr !important
-          }     
-          table {
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
-            border-collapse: collapse;
-            width: 100%;
-          }        
-          th, td {
-            padding: 15px;
-          }
-        }
-         </style>
-          
-          <div class="continer">
-            <h1> Team ${teamNameY} Daily Houers Report </h1>
-            <h3> Date: ${currentDate}  </h3>
-            <table>
-              <thead>
-                <tr><th> Name </th> <th> Hours Report </th></tr>
-              </thead>
-              <tbody>
-                ${newRows}
-              </tbody>
+    const emailContent = 
+    `<html style="height: 100%; direction: ltr;">
+      <body style="height: 100%; margin: 0; font-family: sans-serif; font-weight: 100;">   
+          <div style="position: absolute; top: 30%; left: 50%;transform: translate(-50%, -50%);">
+            <h1 style="color:#fff; width: fit-content; font-weight:500; font-size:28px; padding:10px; border:1px solid #fff; background-color: #55608f;">
+              ${teamNameY} Team -  daily hours report: ${currentDate} 
+             </h1>
+            <table style="border-collapse: collapse; overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,0.1);">
+                <tr><th style="color: black; text-align: left; padding: 4px;"> Name </th> <th style="color: black; text-align: left; padding: 4px;"> Hours Report </th></tr>
+                <tbody> ${newRows} </tbody>
             </table>
           </div>
-          </body>
-          </html>`;
+        </body>
+      </html>`;
       return emailContent
     }
 }
