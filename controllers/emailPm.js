@@ -21,6 +21,7 @@ async function query(method, queryType, queryString) {
     .then(res => res);
 }
 
+fetchAndMaillPms()
 async function fetchAndMaillPms() {
   let day = new Date()
   let currentDate = day.toISOString().split('T')[0]
@@ -59,13 +60,15 @@ async function fetchAndMaillPms() {
 
   Object.keys(teams).forEach(team => {
     const html = generateHTML(team)
+    
     switch (team) {
       case 'Eco':
-        sendMail(html,'meydanl@moveo.group');
+        //sendMail(html,'meydank@moveo.group');
         //sendMail(html, 'carmel@moveo.co.i');
         break;
       case 'HLS':
-        //  sendMail(html, 'mika@moveo.group');
+        //sendMail(html,'meydank@moveo.group');
+        //sendMail(html, 'mika@moveo.group');
         break;
       case 'Fox':
         //sendMail(html, 'oren@moveo.co.il');
@@ -85,7 +88,7 @@ async function fetchAndMaillPms() {
   function generateHTML(teamNameY) {
     teamNames = []
     teamHouers = []
-    for (let i = 0; i < teams[teamNameY].length - 1; i++) {
+    for (let i = 0; i < teams[teamNameY].length -1; i++) {
       let members = teams[teamNameY][i]['column_values'][0].text;
       let houers = teams[teamNameY][i]['column_values'][3].text;
       teamNames.push(members)
@@ -96,64 +99,67 @@ async function fetchAndMaillPms() {
       rows += `<tr><td>${member}</td><td>${teamHouers[i]}</td></tr>`
     }) 
 
-    const emailContent = `<style> #title{
-      color:#fff;
-      font-weight:500;
-      font-size:28px;
-      padding:10px;
-      border:1px solid #fff;
-      background-color: #55608f;
+    let newRows = rows.replace('undefined', '')
+
+    const emailContent = `<html>
+      <body>
+        <style> 
+          .title{
+            color:#fff;
+            font-weight:500;
+            font-size:28px;
+            padding:10px;
+            border:1px solid #fff;
+            background-color: #55608f;
+          }
+          html,body {
+            height: 10%;
+          } 
+          body {
+            margin: 0;
+            font-family: sans-serif;
+            font-weight: 100;
+          } 
+          .continer{
+          table, td, th {  
+            border: 1px solid #ddd;
+            text-align: left;
+            dirltr !important
+          }     
+          table {
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            border-collapse: collapse;
+            width: 100%;
+          }        
+          th, td {
+            padding: 15px;
+          }
+        }
+         </style>
+          
+          <div class="continer">
+            <h1> Team ${teamNameY} Daily Houers Report </h1>
+            <h3> Date: ${currentDate}  </h3>
+            <table>
+              <thead>
+                <tr><th> Name </th> <th> Hours Report </th></tr>
+              </thead>
+              <tbody>
+                ${newRows}
+              </tbody>
+            </table>
+          </div>
+          </body>
+          </html>`;
+      return emailContent
     }
-    html,body {
-      height: 100%;
-    } 
-    body {
-      margin: 0;
-      /* background: linear-gradient(45deg, #49a09d, #5f2c82); */
-      font-family: sans-serif;
-      font-weight: 100;
-    } 
-    .container {
-      position: absolute;
-      top: 30%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    } 
-     table {
-      width: 500px;
-      border-collapse: collapse;
-      overflow: hidden;
-      box-shadow: 0 0 20px rgba(0,0,0,0.1);
-    } 
-    th,td {
-      padding: 15px;/
-    } 
-    th {
-      text-align: left;
-    }
-    </style>
-    
-    <div class="container">
-      <h1 id="title"> Team ${teamNameY} Daily Houers Report </h1>
-      <h3> Date: ${currentDate}  </h3>
-      <table id="our-table">
-        <thead>
-          <tr><th> Name </th> <th> Hours Report </th></tr>
-        </thead>
-        <tbody>
-          ${rows}
-        </tbody>
-      </table>
-    </div>`;
-    return emailContent
-  }
 }
 
 async function sendMail(dataTable, emailAddress) {
   const domain = 'moveodevelop.com';
   const api_Key = 'key-5a8b594f54f98eea6ed02c3424ce70b3';
-  let mailgun = require('mailgun-js')({ apiKey: api_Key, domain: domain });
 
+  let mailgun = require('mailgun-js')({ apiKey: api_Key, domain: domain });
   let mail = mailcomposer({
     from: 'Moveo monday bot <dev@moveodevelop.com>',
     to: emailAddress,

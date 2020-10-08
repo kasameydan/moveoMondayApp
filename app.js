@@ -11,7 +11,6 @@ const cors = require('cors')
 app.use(bodyParser.json())
 app.use(cors());
 
-
 const displayQueryHourly = new CronJob('0 * * * *', async() => {
     await mondayFunc.fetchAndMutation();
 }, null, true);
