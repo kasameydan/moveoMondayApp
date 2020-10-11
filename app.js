@@ -4,7 +4,7 @@ const express = require('express')
 const app = express()
 const mondayFunc = require('./controllers/updateInfoBoard')
 const emailPm = require('./controllers/emailPm')
-const port = process.env.PORT;
+const port = 3000;
 const CronJob = require('cron').CronJob;
 const cors = require('cors')
 

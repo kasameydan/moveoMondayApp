@@ -61,18 +61,15 @@ async function fetchAndMaillPms() {
     const html = generateHTML(team)
     switch (team) {
       case 'Eco':
-        sendMail(html,'meydank@moveo.group');
-        // sendMail(html, 'oren@moveo.co.il');
-        // sendMail(html,'itzshak100@gmail.com')
-        // sendMail(html,'kasameydan@gmail.com');
-        // sendMail(html, 'gize.ajigo@gmail.com')
+       // sendMail(html,'meydank@moveo.group');
+       sendMail(html,'kasameydan@gmail.com');
         // sendMail(html, 'carmel@moveo.co.i');
         break;
       case 'HLS':
         //sendMail(html, 'mika@moveo.group');
         break;
       case 'Fox':
-        //sendMail(html, 'oren@moveo.co.il');
+        sendMail(html, 'oren@moveo.co.il');
         break;
       case 'Charlie':
         // sendMail(html, 'liata@moveo.co.il ');
